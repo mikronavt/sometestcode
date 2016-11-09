@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+	// your code goes here
+	int fib;
+	int a = 1;
+	int b = 1;
+	int c;
+	cin >> fib;
+	
+	for(int i = 0; i <= fib; i++){
+		
+		c = a + b;
+		a = b;
+		b = c;
+	}
+	
+	cout << c;
+	
+	return 0;
+}

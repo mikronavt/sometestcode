@@ -1,0 +1,649 @@
+﻿flashback database to timestamp TO_TIMESTAMP('2016-04-11 18:00:00','YYYY-MM-DD HH24:MI:SS');
+
+export NLS_LANG=AMERICAN_AMERICA.CL8MSWIN1251
+
+ALTER PACKAGE TBG.LT_REQUEST_API COMPILE PACKAGE;
+
+select * from v$restore_point;
+
+
+Flashback database to restore point beforepatches_2901;
+
+
+ps -ef |grep Admin
+/home/oracle
+
+select * from sys.all_objects where status='INVALID' and owner = 'TBG' and object_name = 'LT_REQUEST_API';
+
+select * from sys.all_objects where status='INVALID' and owner NOT IN ('SETTINGS_TRANSFER', 'RESY_VBNK');
+
+SELECT  OWNER, COUNT(*) FROM SYS.ALL_OBJECTS WHERE STATUS = 'INVALID' GROUP BY OWNER;
+select distinct(object_name), t.owner from sys.all_objects t where t.status = 'INVALID' and t.object_type='TRIGGER' and t.owner='TBG';
+
+
+begin
+DBMS_UTILITY.compile_schema('SIEBEL',false);
+end;
+
+BEGIN
+  FOR I IN (SELECT DISTINCT T.OWNER FROM SYS.ALL_OBJECTS T WHERE T.STATUS = 'INVALID' and T.OWNER not in ('SYS','SETTINGS_TRANSFER','RESY_VBNK') ) LOOP
+  DBMS_UTILITY.COMPILE_SCHEMA(I.OWNER,FALSE);
+  END LOOP;
+END;
+/
+
+
+перед выключением show parameter queue
+alter system set job_queue_processes=0;
+500 при включении
+
+предположительно, установленные патчи:
+select * from tbg.cor_versions_hst where install_start_date>=to_date('2016-03-01','YYYY-MM-DD') order by install_start_date;
+
+webtst13
+
+
+update nls_session_parameters where parameter='NLS_LENGTH_SEMANTICS' set value = 'char';
+
+
+alter system set NLS_LENGTH_SEMANTICS = 'char' ;
+
+
+alter system set db_recovery_file_dest = '/oracle/prod/u01/data/VBNK/oradata/';
+
+
+tail -100f /oracle/prod/u01/data/VBNK/diag/rdbms/vbnk_stb/VBNK/trace/alert_VBNK.log
+
+
+/u0/app/Forms_middleware/asinst_1/diagnostics/logs/OPMN/opmn  здесь логи OPMN
+
+SELECT * FROM TBG.RPT_REP_SVR;
+SELECT * FROM VBNK.SM_REP_SVR;
+
+SELECT * FROM DBA_JAVA_POLICY where name like '%172%';
+
+EXECUTE DBMS_JAVA.GRANT_PERMISSION('TBG','SYS:java.net.SocketPermission','172.18.18.29:7003','connect,resolve');
+
+
+
+select * from cor_intg_sms t
+where t.b_number = 79688543305 
+
+
+select * from LT.lt_versions_hist
+
+
+
+/u0/domains/Forms_domain/runtime
+
+
+
+
+
+
+
+
+
+при ora-38880
+alter system set compatible='11.2.0.0' scope=spfile ;
+
+
+
+select to_char(dbms_metadata.get_ddl('SYNONYM','LT_XML_INTERFACE_S','SIEBEL')) from dual;
+узнать базу бэка на зибеле
+
+SELECT * FROM dba_db_links;
+
+create public database link TEST09 
+connect to BY_CRM IDENTIFIED BY qwe using 
+'(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = "172.18.18.69")(PORT = 1521))
+)
+(CONNECT_DATA =
+(SERVICE_NAME = "VBNK")
+)
+)';
+
+
+переопределить синонимы
+create or replace synonym LT_XML_INTERFACE_S for LT_XML_INTERFACE_CRM@TEST07;
+create or replace synonym LT_REQUEST_XML for LT_REQUEST_API@TEST07;
+create or replace synonym CRP_CARD_ORDERS for CRP_CARD_ORDER_INFO_VW@TEST07;
+create or replace synonym CRP_CARD_SEAL for CRP_CARD_SEAL_VW@TEST07;
+create or replace synonym CRP_ORDER_INFO for CRP_CARD_ORDER_VW@TEST07;
+
+select to_char(dbms_metadata.get_ddl('SYNONYM','LT_XML_INTERFACE_S','SIEBEL')) from dual;
+
+siebctl  -h "C:\ses\siebsrvr" -S siebsrvr -i  "LETO_UAT_sbluatapp" -a -g "-g sbluatapp:2320 -e  LETO_UAT -s sbluatapp -l RUS -u SADMIN" -e SADMIN -t 120 -u .\SADMIN -p SADMIN
+
+change parameter ApplicationUser ="uid=APPUSER,ou=siebel,dc=oudleto", ApplicationPassword = Qwer1234, BaseDn = "ou=siebel,dc=oudleto", CredentialsAttributeType = mail, SecAdptDllName = sscfldap, HashAlgorithm = RSASHA1, HashDBPwd = False, HashUserPwd = False, Port = 6501, PropagateChange = False, PasswordAttributeType = userPassword, SaltUserPwd = False, SaltAttributeType = title, ServerName = 172.18.18.47, SharedDBPassword = ADUSER, SharedDBUsername = ADUSER, SingleSignOn = False, UsernameAttributeType = uid, UseSsl = False, UseAdapterUsername = False for named subsystem LDAPSecAdptOVD
+
+date -s "21 MAY 2014 10:00:00"
+
+ALTER SYSTEM SET fixed_date = '21-MAY-14-10:00:00';
+
+ALTER SYSTEM KILL SESSION 'SID,Serial#'; 
+
+select sofar, totalwork, units from v$session_longops where opname = 'Flashback Database'; мониторинг флешбека
+
+select flashback_on from v$database
+
+
+CREATE RESTORE POINT beforepatches_2912 GUARANTEE FLASHBACK DATABASE; гарантированная точка отката. создавать перед патчем.
+
+select to_char(OLDEST_FLASHBACK_TIME, 'YYYY-MM-DD HH24:MI:SS') from v$flashback_database_log; перед откатом
+
+select value from v$parameter where name='background_dump_dest'; расположение алерт лога
+
+SELECT *
+FROM dba_sys_privs; - посмотреть права юзера
+
+
+declare
+link_name varchar2(20):='TEST11';
+begin
+   
+execute immediate 'create or replace synonym LT_XML_INTERFACE_S for LT_XML_INTERFACE_CRM@'||link_name;
+execute immediate 'create or replace synonym LT_REQUEST_XML for LT_REQUEST_API@'||link_name;
+execute immediate 'create or replace synonym CRP_CARD_ORDERS for CRP_CARD_ORDER_INFO_VW@'||link_name;
+execute immediate 'create or replace synonym CRP_CARD_SEAL for CRP_CARD_SEAL_VW@'||link_name;
+execute immediate 'create or replace synonym CRP_ORDER_INFO for CRP_CARD_ORDER_VW@'||link_name;
+DBMS_UTILITY.compile_schema('SIEBEL',false);
+end;
+
+
+grant JAVASYSPRIV to bankexp;
+grant execute on tbg.tst_tk_util to bankexp;
+
+select * from dba_parallel_execute_chunks ch where ch.TASK_NAME = 'PROCESS BAL_HIST'
+
+
+create tablespace CQUEST datafile 'cquest01.dbf' size 250M autoextend on next 50M;
+
+create temporary tablespace CQUEST_TMP tempfile 'cqtmp01.dbf' size 100M autoextend on next 50M;
+
+create user cquest identified by cquest default tablespace CQUEST temporary tablespace CQUEST_TMP;
+
+блокировки сессий:
+select (select sid||';'||USERNAME from V$SESSION where sid=S.FINAL_BLOCKING_SESSION) SESS_CONFLICT, S.* 
+from v$session s where s.FINAL_BLOCKING_SESSION is not null;
+
+убить все сессии к схеме:
+
+define USERNAME = "USER_NAME"
+
+begin    
+  for i in (select SID, SERIAL# from V$SESSION where USERNAME = upper('&&USERNAME')) loop   
+    execute immediate 'alter system kill session '''||i.SID||','||i.SERIAL#||''' immediate';
+   end loop;
+end;
+/
+
+посмотреть процесс лочащий:
+
+
+SELECT p.spid, p.program, s.program, s.terminal, s.status
+FROM v$process p, v$session s
+WHERE p.addr = s.paddr and s.sid='6145';
+
+
+ALTER TABLESPACE CRD_SCHEDULE_IDX ADD DATAFILE '/oracle/prod/u01/data/VBNK/oradata/crd_sh_idx_0001.dbf' SIZE 3G AUTOEXTEND ON NEXT 300M MAXSIZE unlimited;
+
+
+Пользователь pflbuser создан. Пароль qwe123.
+>
+>Пользователю делегирована роль ChDate с возможность управления только 
+>системной датой. Для активации роли(возможности смены даты) необходимо 
+>после логина на сервера под УЗ pflbuser выполнить команду:
+>
+># swrole ChDate
+>
+>После этого выполнять команду date.
+date -n mmddHHMM[yyyy]
+
+
+select distinct client_info from v$session where status='ACTIVE' and username='TBG'; --шедуля
+
+EXEC dbms_scheduler.run_job('VBNK.NEW_DAY'); --при смене дат
+
+
+логи обмена Фронта с АБС:
+
+select /*-+ parallel(p 8) */ lg.err_text,lg.err_call_stack,
+p.id, p.oper_id, p.sys_date, p.xml_in.getclobval() xml_in, p.xml_out.getclobval() xml_out, p.error_id, 
+p.error_message, p.module_code, p.proc_name, p.mk_trace, p.agnum, p.codeoper, p.begdate, p.enddate 
+from tbg.Lt_Request_Api_Prot_CC p, cor_error_log lg
+where lg.error_id(+)=p.error_id
+and module_code='CRM'
+--and p.agnum='13321865'
+--and instr(p.xml_in.getclobval(),'14083703')>0
+--and sys_date>trunc(sysdate)
+--and p.error_id>0
+--and sys_date>to_date('01012015','DDMMYYYY')
+and sys_date>trunc(sysdate)
+order by p.id desc
+
+
+
+Коллеги, тогда для тестовых стендов надо изменить умолчательный канал
+begin
+  cor_sys.Set_Varchar2('IMK.CNS_CHANNEL_CODE', 'SMPP_DUMMY_CHANNEL');
+end;
+
+
+TWMG_SMPP_INTERVALE  тогда используйте по мере необходимости для нужного типа карт
+update crp_card_types ct
+   set ct.notify_channel_fimi = 'TWMG_SMPP_INTERVALE'
+where ct.card_type = 'Тип карты';
+
+Пустое значение notify_channel_fimi  означает, что будет передаваться умолчательное значение
+
+Прошу использовать на тестовой системе один из каналов:
+•         SMPP_DUMMY_CHANNEL, если получение смс-уведомлений для подписанной карты не требуется;
+•         TWMG_SMPP_INTERVALE, если необходимо получать смс-уведомления для подписанной карты.
+
+
+
+select * from v$sql where sql_id = 'bn76rzq0p7pdb'
+
+
+rm -rf
+rm -rf /oracle/prod/u01/data/VBNK/diag/rdbms/vbnk_stb2/VBNK/trace/*
+rm -rf /oracle/prod/u01/data/VBNK/diag/rdbms/vbnk_stb2/VBNK/alert/*
+rm -rf /oracle/prod/u01/data/VBNK_STB2/diag/rdbms/vbnk_stb2/VBNK/trace/*
+rm -rf /oracle/prod/u01/data/VBNK_STB2/diag/rdbms/vbnk_stb2/VBNK/alert/*
+rm -rf /oracle/prod/u01/data/VBNK/oradata/VBNK_STB2/autobackup/*
+startup mount force ;
+и потом сразу выключаем флешбек и появляется какое то место
+
+
+
+
+
+
+begin
+tbg.LT_Before_Set_Patch; 
+end;
+/
+
+begin 
+tbg.LT_After_Set_Patch;
+end;
+/
+
+
+тнска бэка
+/u0/app/Forms_middleware/asinst_1/config/tnsnames.ora 
+
+srvrmgr> list component expressmgr_oui for server sblplapp01 show SV_NAME, CC_NAME, CC_ALIAS ,  CP_DISP_RUN_STATE
+
+srvrmgr> list param securebrowse for compdef expressmgr_oui show PA_VALUE
+
+Установка релиза на ЗИБЕЛЬ:
+insert into siebel.installation_history
+  (id, server, installation_date, release_version, comments)
+values
+  ((select count(*) + 1 from installation_history), 'PROD', sysdate, '7.5', 'a.tsaplin');
+commit;
+
+
+
+exec kill_session(sid,serial#);
+exec change_pwd_broker('QWERTY$4');
+
+Необходимо менять счетчики
+IMK_PACKAGE_SEQ  - для выгрузки файлов CMRQA
+IMK_PERSON_ID_SEQ – счетчик MK_ID для клиентов в МК (именно его и надо менять в данном случае)
+IMK_ACCOUNT_ID_SEQ – счетчик для счетов МК
+PLN_FX_AGREE_NO_SEQ – счетчик номеров договоров
+
+
+
+declare
+      seq_num number;
+begin
+  execute immediate 'select tbg.PLN_FX_AGREE_NO_SEQ.currval from dual' 
+          into seq_num;
+  execute immediate 'drop sequence tbg.PLN_FX_AGREE_NO_SEQ';
+  execute immediate 'create sequence PLN_FX_AGREE_NO_SEQ minvalue 1 maxvalue 9999999999999999999999999999
+          start with ' || seq_num + 10000000 ||'increment by 1 cache 20;';
+end;
+
+
+производительность:
+
+select event,round (est_dbtime_ms/est_waits,1) as est_avg_latency_ms
+from (select event,round(sum(case when time_waited >0 then greatest(1,1000000/time_waited) else 0 end )) as est_waits,sum(1000) as est_dbtime_ms from v$active_session_history where sample_time > sysdate -50/1440
+and wait_class ='User I/O' group by event ) order by 2 desc;
+
+
+вылавливать ошибки:
+select /*+ first_rows*/* from tbg.cor_error_log t
+where 1=1
+--and username like 'OPS%'
+--and action='JOB246493'
+--and t.err_timestamp>sysdate-1/24
+--and upper(err_text) like '%ПАМЯ%'
+and t.err_timestamp>trunc(sysdate)
+and error_id>141827684
+order by 1 desc;
+
+
+проц
+lsdev -Cc processor |wc -l
+
+lsconf|grep Processor
+
+
+переключение на тестовый WINGS:
+
+
+drop database link WINGS_BD;
+
+create database link WINGS_BD
+  connect to DWH_ETL identified by DWH_ETL
+  using '(DESCRIPTION=
+    (ADDRESS=
+      (PROTOCOL=TCP)
+      (HOST=172.18.18.120)
+      (PORT=1521)
+    )
+    (CONNECT_DATA=
+      (SERVER=dedicated)
+      (SID=WCSPRD)
+    )
+  )';
+
+
+
+change evtloglvl %=4 for component finsobjmgr_oui_rus
+
+
+
+память topas
+
+
+SGA + PGA = MEMORY
+
+alter system set SGA_TARGET=0 scope=spfile;
+
+alter system set SGA_MAX_SIZE=0 scope=spfile;
+
+alter system set PGA_AGGREGATE_TARGET=0 scope=spfile;
+
+alter system set MEMORY_TARGET=26G scope=spfile;
+
+alter system set MEMORY_MAX_TARGET=26G scope=spfile;
+
+
+переключение бэка на абс:
+
+update tbg.rpt_rep_svr set report_server_name='rep_ptestapp07_xlappabs', host_port='dc1-ptestapp07.bankexp.local:8888' where code='XL';
+update vbnk.sm_rep_svr set url='http://dc1-ptestapp07.bankexp.local:8888/reports/rwservlet/getjobid',name='rep_ptestapp07_vbappabs' where dflt='Y';
+commit;
+
+
+очистка app back
+rm $(find /u0/domains/  -name 'core.*')
+
+
+джобы:
+select * from dba_scheduler_jobs where job_name='JOB_LT_BATCH_CMRQA_L1';
+
+select * from DBA_JOBS_RUNNING;
+
+Select * from dba_scheduler_job_log where job_name='JOB_LT_BATCH_CMRQA_L1';
+
+
+обезличка отработала:
+select count(*) from MGC_CL_CONTACTS where contact like '777%';
+
+
+обезличка работает:
+select * from v$sql where sql_id in (select sql_id from v$session where status = 'ACTIVE') and sql_text like '%tbg.MGC_CL_CONTACTS%';
+
+
+
+--Скрипт для мониторинга из бэка открытия договоров:
+select lg.err_text,lg.err_call_stack,
+p.id, p.oper_id, p.sys_date, p.xml_in.getclobval() xml_in, p.xml_out.getclobval() xml_out, p.error_id,
+p.error_message, p.module_code, p.proc_name, p.mk_trace, p.agnum, p.codeoper, p.begdate, p.enddate
+from tbg.Lt_Request_Api_Prot_CC p, cor_error_log lg
+where lg.error_id(+)=p.error_id
+and module_code='CRM'
+--and error_message like 'ORA-04091: table TBG.CRP_AGREEMENTS is mutating, trigger/function may not see it%'
+--and agnum in (13420663)
+--and p.xml_in like '%10000%'
+--and p.error_id!=0
+and sys_date>trunc(sysdate)
+--and p.id>8497349
+order by p.id desc;
+
+
+установленные патчи (в2)
+
+select 
+--distinct vh.patch_name
+artf.artefact_name,vh.install_start_date,vh.install_end_date,vh.* 
+from tbg.COR_VERSIONS_HST vh, tbg.COR_VERSIONS_ARTF artf
+where 1=1
+--and upper(vh.issues) like ('%201504_RELIZ%')
+--and vh.install_end_date>to_date('22082013','DDMMYYYY')
+--and vh.install_end_date<to_date('24082013','DDMMYYYY')
+and artf.version_id(+)=vh.version_id
+order by vh.install_start_date desc
+
+запущенные джобы:
+select dbr.sid, s.serial#, s.username, dbj.* 
+from dba_jobs_running dbr, dba_jobs dbj , v$session s
+where dbr.job=dbj.job and s.sid=dbr.sid;
+
+перед убийством джоба:
+begin
+ dbms_job.broken(15609,true);
+end;
+
+следим за размером и свободным местом на Табличных Пространствах схемы ТБГ :
+select df.tablespace_name "Tablespace",
+totalusedspace "Used MB",
+(df.totalspace - tu.totalusedspace) "Free MB",
+df.totalspace "Total MB",
+round(100 * ( (df.totalspace - tu.totalusedspace)/ df.totalspace)) "Pct. Free",
+df.AUTOEXTENSIBLE "autoex",
+df.online_status "online"
+from
+(select tablespace_name,AUTOEXTENSIBLE,online_status,
+round(sum(bytes) / 1048576) TotalSpace
+from dba_data_files 
+group by tablespace_name,AUTOEXTENSIBLE,online_status) df,
+(select round(sum(bytes)/(1024*1024)) totalusedspace, tablespace_name
+from dba_segments 
+where SEGMENT_TYPE  !='INDEX' and OWNER='TBG'
+group by tablespace_name) tu
+where df.tablespace_name = tu.tablespace_name 
+order by "Pct. Free";
+
+найти имя табличного пространства по имени таблицы :
+select distinct  segment_name "имя объекта", segment_type "тип объекта", tablespace_name
+from dba_segments 
+where owner='TBG' and SEGMENT_NAME='CRP_AGREEMENTS';
+
+tail -100f /oracle/prod/u01/data/VBNK_STB/diag/rdbms/vbnk_vbnkperftst01/VBNK/trace/alert_VBNK.log
+
+
+занятое место в тейблспейсах:
+SELECT DISTINCT 'zz', df.tablespace_name, SUM (df.BYTES) "Total Bytes", MAX( fs.total_bytes) "Bytes Free", 
+(MAX(fs.total_bytes)/SUM (df.BYTES))*100 "% Free" 
+FROM SYS.dba_data_files df, SYS.dba_free_space_coalesced fs 
+WHERE ((df.tablespace_name = fs.tablespace_name)) 
+AND df.TABLESPACE_NAME='VBNK_DATA'
+GROUP BY df.tablespace_name 
+ORDER BY df.tablespace_name;
+
+
+датафайлы в тейблеспейсах:
+SELECT tablespace_name, file_name, status, bytes
+FROM dba_data_files
+WHERE tablespace_name LIKE 'MGC_AC_RESTRICTS_2013'
+ORDER BY tablespace_name, file_name;
+
+
+добавление датафайла:
+ALTER TABLESPACE MGC_AC_RESTRICTS_2013 ADD DATAFILE '/oracle/prod/u01/data/VBNK/oradata/mgc_acct_bal_hist_2012_01.dbf'
+SIZE 500M REUSE AUTOEXTEND ON;
+
+drop datafile '/oracle/prod/u01/data/VBNK/oradata/vbnk_data05.dbf';
+
+массовое изменение для датафайлов:
+
+BEGIN
+	FOR DF IN (select FILE_NAME from dba_data_files where increment_by = 1) LOOP
+	EXECUTE IMMEDIATE 'ALTER database datafile ''' || DF.FILE_NAME || ''' AUTOEXTEND ON NEXT 100M';
+	END LOOP;
+END;
+
+
+
+[16.02.2016 18:18:56] Stanislav M.: адрес Gplus вообще был зашит в драйвер
+[16.02.2016 18:19:50] Stanislav M.: администрирование - комуникации
+[16.02.2016 18:19:54] Stanislav M.: выделяет Gplus
+[16.02.2016 18:20:01] Stanislav M.: на нижнем аппплете "профили"
+[16.02.2016 18:20:30] Stanislav M.: видим драйвер "gplus universal"
+[16.02.2016 18:20:39] Stanislav M.: прожимаем его и смотрит на третий апплет
+[16.02.2016 18:20:52] Stanislav M.: значение Driver:PrimaryGenCommServerURL
+
+Еще логи АБС:
+select /*+ first_rows */
+       egl.outgoing_request
+      ,egl.ingoing_answer
+      ,egl.target_url
+      ,pm.*
+      ,asr.*
+      ,ir.*
+  from tbg.lt_pend_messages      pm
+      ,tbg.iws_account_sync_reqs asr
+      ,tbg.iws_responses         ir
+      ,tbg.ext_gate_log          egl
+where 
+--pm.recip_code = 'IWS'
+   --asr.pend_id = pm.id
+  pm.accountid in (15135568)
+  --and ir.src_id (+)= asr.sr_id
+   --and ir.src_action (+)= 'accountSynchInfo' -- по синхронизации
+   and egl.ext_log_id (+)= ir.request_id
+order by pm.id desc;
+
+последняя перезаливка по бою:
+SELECT MAX(COMPLETION_TIME) as time_end FROM V$ARCHIVED_LOG  where APPLIED='YES' ;
+
+
+
+производительность
+
+[17:10:08] Stanislav M.: время выполнения в МС
+[17:10:18] Stanislav M.: NORM_STDDEV - во сколько все стало хуже
+[17:10:28] Stanislav M.: EXECS - сколкьо раз выполнялся запрос
+[17:10:40] Stanislav M.: AVG_ETIME_BEFORE AVG_ETIME_AFTER - два поля - до и после
+[17:11:26] Stanislav M.: метрика AVG_ETIME_BEFORE снимается за все время по вчера,
+метрика AVG_ETIME_AFTER   снимается за вчера-сегодня
+[17:11:39] Stanislav M.: RESULT - сообщает быстрее или медленнее
+[17:11:47] Stanislav M.: SQL_ID               соответственно сам запрос
+[17:12:45] Stanislav M.: сам запрос использующийся в метрике http://orabase.org/index.php/2016/03/28/find-query-with-performance-degradation-running-more-than-5-sec/
+[17:17:03] Stanislav M.: этим скриптом посмотреть менялись ли планы для запросов
+select ss.snap_id, ss.instance_number node, begin_interval_time, sql_id, plan_hash_value,
+nvl(executions_delta,0) execs,
+(elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000 avg_etime,
+(buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)) avg_lio,
+round ( (DISK_READS_DELTA/decode(nvl(DISK_READS_DELTA,0),0,1,executions_delta))) avg_pio
+
+from DBA_HIST_SQLSTAT S, DBA_HIST_SNAPSHOT SS
+where sql_id = '&1'
+and ss.snap_id = S.snap_id
+and ss.instance_number = S.instance_number
+and executions_delta > 0
+order by 1, 2, 3
+/
+[17:17:15] Stanislav M.: если планы не менялись, а время выполнения просело - то смотреть на общую утилизацию сервера
+[17:17:30] Stanislav M.: через авр например
+
+
+
+
+скрипт урезания, выполнять под SYS
+
+/* Remove REPORT_DATA + REPORT_INDEX */
+DROP TABLESPACE REPORT_DATA    INCLUDING CONTENTS AND DATAFILES;
+DROP TABLESPACE REPORT_INDEX   INCLUDING CONTENTS AND DATAFILES;
+ 
+/* Remove RESY_DATA + RESY_INDEX + RESY user */
+DROP USER RESY CASCADE;
+DROP TABLESPACE RESY_DATA   INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS;
+alter table RESY_VBNK.DW_LOADING_REMOTE_OBJECTS disable constraint  DW_LOADING_REMOTE_OBJECTS_PK;
+DROP TABLESPACE RESY_INDEX   INCLUDING CONTENTS AND DATAFILES CASCADE CONSTRAINTS;
+
+батники в консоль:
+Redirect "all" output to a single file:
+
+Run:
+
+test.bat > test.txt 2>&1
+
+
+копирование прав пользователя 
+http://dba-notes.org/2011/03/22/%D0%BA%D0%BE%D0%BF%D0%B8%D1%80%D1%83%D0%B5%D0%BC-%D0%BF%D1%80%D0%B0%D0%B2%D0%B0-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F/
+:
+SELECT 
+	'GRANT '      || 
+	tp.privilege  || 
+	' ON '        || 
+	tp.owner      ||
+	'.'           || 
+	tp.table_name ||
+	' TO '        || 
+	tp.grantee    || 
+	';' cmd
+FROM dba_tab_privs tp 
+	WHERE tp.grantee = 'CUBE'
+ 
+UNION
+ 
+SELECT 
+	'GRANT '     || 
+	sp.privilege || 
+	' TO '       || 
+	sp.grantee   || 
+	DECODE(sp.admin_option, 'YES', ' WITH ADMIN OPTION;', ';')
+FROM dba_sys_privs sp 
+	WHERE sp.grantee = 'CUBE'
+ 
+UNION
+ 
+SELECT 
+	'GRANT '        || 
+	rp.granted_role || 
+	' TO '          || 
+	rp.grantee      || 
+	DECODE(rp.admin_option, 'YES', ' WITH ADMIN OPTION;', ';')
+FROM dba_role_privs rp 
+	WHERE rp.grantee = 'CUBE';
+
+
+
+урезание доп
+Drop user RESY_TEST cascade;
+Drop user RESY_VBNK cascade;
+Drop user RESY1 cascade;
+
+select host from all_db_links where db_link = 'WINGS';
+
+select port_address from siebel.s_ws_port where name = 'ATC Send SMS WS';
+
+grant restricted session to username;
+
+revoke restricted session from username;
+
+память:
+
+SELECT component, current_size/1024/1024 MB_curr_s, min_size/1024/1024 MB_min_s, max_size/1024/1024 MB_max_size FROM v$memory_dynamic_components WHERE current_size != 0;
+topas
